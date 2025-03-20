@@ -1,0 +1,542 @@
+O que é "Operation" no HTTP?
+
+No HTTP, "Operation" é sinônimo de "método HTTP". Esses métodos definem qual ação você deseja realizar em um recurso (como um arquivo, dados ou um serviço) em um servidor web. Pense neles como verbos que indicam o que você quer fazer.
+
+Os Métodos HTTP Mais Comuns:
+
+GET:
+Usado para recuperar dados de um servidor.
+É uma operação de leitura, não altera nada no servidor.
+Exemplo: Quando você acessa uma página da web, seu navegador usa o método GET para obter o conteúdo da página.
+POST:
+Usado para enviar dados para o servidor, geralmente para criar um novo recurso.
+Pode ser usado para enviar formulários, dados de login, etc.
+Exemplo: Quando você preenche um formulário de cadastro e clica em "Enviar", os dados são enviados usando o método POST.
+PUT:
+Usado para atualizar um recurso existente no servidor.
+Substitui o recurso inteiro com os dados enviados.
+Exemplo: Atualizar os detalhes de um perfil de usuário.
+DELETE:
+Usado para remover um recurso do servidor.
+Exemplo: Excluir um arquivo ou uma entrada de banco de dados.
+Métodos HTTP Menos Comuns (Mas Importantes):
+
+OPTIONS:
+Usado para obter informações sobre as opções de comunicação disponíveis para um determinado recurso.
+Útil para verificar quais métodos HTTP são suportados pelo servidor.
+HEAD:
+Semelhante ao GET, mas retorna apenas os cabeçalhos da resposta, sem o corpo.
+Útil para verificar se um recurso existe ou para obter informações sobre ele sem baixar o conteúdo.
+PATCH:
+Usado para aplicar modificações parciais a um recurso.
+Diferente de PUT, que substitui o recurso inteiro, PATCH modifica apenas as partes especificadas.
+TRACE:
+Usado para depurar a comunicação, retornando a mensagem de solicitação recebida pelo servidor.
+Normalmente desabilitado por questões de segurança.
+Por que os Métodos HTTP são Importantes?
+
+Comunicação estruturada: Eles fornecem uma maneira padronizada de comunicar intenções ao servidor.
+APIs RESTful: São fundamentais para a criação de APIs RESTful (Representational State Transfer), que são amplamente utilizadas para a comunicação entre aplicativos.
+Segurança: O uso correto dos métodos HTTP ajuda a garantir a segurança das aplicações, pois permite definir permissões e restrições para diferentes tipos de operações.
+Em resumo, os métodos HTTP (ou "Operations") são os verbos da comunicação na web, definindo as ações que você pode realizar em recursos em um servidor.
+
+----------------
+
+Ao criar APIs, você normalmente usa esses métodos HTTP específicos para executar uma ação específica.
+
+Normalmente você usa:
+
+POST: para criar dados. (semelhante, HEAD apenas os cabeçalhos da resposta, sem o corpo)
+GET: para ler dados.
+PUT: para atualizar os dados. (semelhante, PATCH para atualizar os dados parciais)
+DELETE: para excluir dados.
+------------
+
+
+$ pyenv install 3.11.4
+$ cd 
+/dio/py/ForPytBacDev/06DesenvolvendoSuaPrimeiraAPIcomFastAPIPythonEDocker/workout_api
+$ pyenv virtualenv 3.11.4 workoutapi
+$ pyenv activate workoutapi
+$ pyenv deactivate
+$ pyenv activate workoutapi
+(workoutapi) $ pip install fastapi uvicorn sqlalchemy pydantic
+(workoutapi) $ cd 
+/dio/py/ForPytBacDev/06DesenvolvendoSuaPrimeiraAPIcomFastAPIPythonEDocker/workout_api
+(workoutapi) $ mkdir workout_api
+(workoutapi) $ cd workout_api/
+(workoutapi) $ pip install isort black autopep8 flake8
+(workoutapi) $ pip install --upgrade pip
+(workoutapi) $ pip install Pylint Bandit Mypy Pytest
+(workoutapi) $ pip freeze > requirements.txt 
+## Para ver o que está instalado no ambiente virtual localizado 
+(workoutapi) $ pip list
+(workoutapi) $ which python3
+:: default :: /home/eduardof/.pyenv/versions/workoutapi/bin/python
+:: /home/eduardof/.pyenv/versions/3.11.4/bin/python3
+:: /home/eduardof/.pyenv/versions/3.11.4/bin/python
+:: /home/eduardof/.pyenv/shims/python3
+
+### O Bandit classifica as vulnerabilidades em diferentes níveis de severidade (baixo, médio, alto).
+### Você pode filtrar os resultados com base no nível de severidade usando a opção -l.
+(workoutapi) $ bandit -r .
+
+# O Pylint analisará o arquivo e exibirá um relatório com erros, avisos e sugestões de melhorias.
+(workoutapi) $ pylint  .
+
+# O Mypy verificará os tipos no seu código e exibirá erros de tipo, se houver.
+(workoutapi) $ mypy .
+
+# O Pytest descobrirá e executará automaticamente os testes no seu projeto.
+(workoutapi) $ pytest
+
+## Esses comandos são usados para padronizar e melhorar a qualidade do código Python:
+## isort organiza as importações.
+## black formata o código.
+## autopep8 corrige problemas de estilo.
+(workoutapi) $ isort . && black . && autopep8 --in-place --recursive .
+(workoutapi) $ flake8 .
+(workoutapi) $ pylint $(find . -name "*.py")
+
+
+## iniciar
+(workoutapi) $ uvicorn workout_api.main:app --reload
+
+
+http://127.0.0.1:8000/docs
+vc acess os docs da APIs
+
+
+
+sudo apt update
+sudo apt install docker-compose
+docker-compose --version
+
+O erro "Permission denied" indica que o comando docker-compose não tem permissão para acessar o socket do Docker. Isso geralmente ocorre porque o usuário atual não está no grupo docker.
+
+Solução
+Adicionar o Usuário ao Grupo docker: Adicione o seu usuário ao grupo docker para permitir que ele execute comandos do Docker sem precisar de permissões de superusuário.
+- sudo usermod -aG docker $USER
+
+Reiniciar a Sessão: Para que as mudanças tenham efeito, você precisa sair e entrar novamente na sua sessão ou reiniciar o sistema.
+- newgrp docker
+
+Verificar a Instalação do Docker: Certifique-se de que o Docker está instalado e funcionando corretamente.
+docker --version
+docker-compose --version
+
+
+-----------------------------
+Executar o Comando docker-compose Novamente: Após adicionar o usuário ao grupo docker e reiniciar a sessão, tente executar o comando docker-
+
+
+
+----------Em caso de Falha
+Atualizar Docker Compose:
+sudo apt update
+sudo apt install docker-compose
+
+Remover Contêineres Existentes: Se houver contêineres existentes que estão causando problemas, você pode removê-los e tentar novamente:
+- docker-compose down
+- docker-compose rm -f
+
+Reiniciar Docker: Reinicie o serviço Docker para garantir que todas as configurações estejam corretas:
+- sudo systemctl restart docker
+
+Executar Docker Compose Novamente: Tente executar o comando docker-compose up -d novamente:
+- docker-compose up -d
+
+
+Verificar se esta funcionando
+- > docker ps
+
+honEDocker/workout_api$ docker ps
+CONTAINER ID   IMAGE                COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+3f7cec86be6e   postgres:11-alpine   "docker-entrypoint.s…"   10 minutes ago   Up 10 minutes   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   workout_api_db_1
+
+
+-- instalar
+
+pip install alembic
+
+-- install alembic
+ alembic init alembic
+
+-- install asyncpg
+pip install asyncpg
+
+
+make create-migrations d="init_db"
+
+make run-migrations
+
+
+workout_api/
+├── main.py                # Ponto de entrada da aplicação
+├── config.py              # Configurações da aplicação
+├── database.py            # Configuração do banco de dados
+├── security.py            # Funcionalidades de segurança
+├── controllers/           # Rotas (controllers)
+│   ├── __init__.py        # Importação centralizada dos controllers
+│   ├── atleta.py          # Rotas para Atleta
+│   ├── categoria.py       # Rotas para Categoria
+│   ├── centro_treinamento.py  # Rotas para Centro de Treinamento
+├── models/                # Modelos SQLAlchemy
+│   ├── __init__.py        # Importação centralizada dos modelos
+│   ├── atleta.py          # Modelo para Atleta
+│   ├── categoria.py       # Modelo para Categoria
+│   ├── centro_treinamento.py  # Modelo para Centro de Treinamento
+├── schemas/               # Esquemas Pydantic
+│   ├── __init__.py        # Importação centralizada dos esquemas
+│   ├── atleta.py          # Esquema para Atleta
+│   ├── categoria.py       # Esquema para Categoria
+│   ├── centro_treinamento.py  # Esquema para Centro de Treinamento
+├── alembic/               # Diretório do Alembic para migrações
+├── requirements.txt       # Dependências do projeto
+└── Makefile               # Automação de tarefas
+# Configurações do banco de dados
+DATABASE_URL=postgresql+asyncpg://workout:workout@localhost:5432/workout
+
+# Configurações de segurança
+SECRET_KEY=my-super-secret-key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# Configurações gerais
+DEBUG=True
+
+
+
+Como Resolver
+
+Verificar se esta funcionando
+- > docker ps
+
+1. Reiniciar o Serviço do PostgreSQL
+Tente reiniciar o serviço do PostgreSQL para garantir que ele esteja rodando:
+- sudo systemctl restart postgresql
+
+Após isso, verifique novamente o status:
+- sudo systemctl status postgresql
+
+O status esperado deve ser algo como:
+Active: active (running)
+
+
+2. Verificar Logs do PostgreSQL
+Se o serviço não iniciar corretamente, verifique os logs para identificar o problema:
+- sudo journalctl -u postgresql
+
+Procure por mensagens de erro, como problemas de configuração ou falhas na inicialização.
+
+
+3. Verificar Configuração do PostgreSQL
+Certifique-se de que o PostgreSQL está configurado corretamente:
+
+Arquivo postgresql.conf: Verifique se a porta está configurada corretamente (deve ser 5432 no seu caso):
+
+sudo nano /etc/postgresql/<versão>/main/postgresql.conf
+
+
+
+========================================================
+Se você já tentou corrigir as permissões e o problema persiste, apagar os contêineres e reconstruí-los pode ser uma boa solução. Isso garante que o ambiente seja recriado do zero, eliminando possíveis configurações incorretas ou inconsistências.
+
+1) Parar e Remover os Contêineres
+
+1.1 : Pare os contêineres em execução:
+docker-compose down
+
+1.2: Remova os contêineres existentes:
+docker-compose rm -f
+
+1. 3: Opcionalmente, remova os volumes associados (se quiser recriar o banco de dados do zero):
+docker volume prune -f
+
+
+2. Verificar e Limpar Imagens (Opcional)
+
+2.1 : Liste as imagens:
+docker images
+
+2.2 : Remova as imagens relacionadas ao projeto (substitua <image_id> pelo ID da imagem):
+docker rmi <image_id>
+Exemplo: docker rmi 10d7fb41183a
+
+3. Subir os Serviços Novamente
+obs: 
+- lembrando que deve estar no diretorio >> cd /dio/py/ForPytBacDev/06DesenvolvendoSuaPrimeiraAPIcomFastAPIPythonEDocker/workout_api
+- neste diretorio, deve exitir o arquivo docker-compose.yml, como exemplo abaixo
+version: "3"
+services:
+  db:
+    image: postgres:11-alpine
+    environment:
+      POSTGRES_PASSWORD: workout
+      POSTGRES_USER: workout
+      POSTGRES_DB: workout
+    ports:
+      - "5432:5432"  # Alterar a porta mapeada para 5432
+
+
+3.1 : Reconstrua e inicie os serviços:
+docker-compose up --build -d
+
+3.2 : Verifique se os contêineres estão rodando:
+docker ps
+
+4. Verificar Logs
+Se o problema persistir, verifique os logs do contêiner do banco de dados para identificar o erro:
+
+Liste os logs do contêiner do banco de dados:
+docker logs <nome_do_container>
+Substitua <nome_do_container> pelo nome do contêiner do banco de dados (você pode encontrá-lo com docker ps).
+
+
+5. Testar a Conexão
+Após recriar os serviços, teste a conexão com o banco de dados para garantir que está funcionando corretamente:
+psql -U workout -h localhost -d <nome_do_banco>
+
+
+
+
+
+
+Passos para Resolver
+OBS : 
+
+roxy: listen tcp4 0.0.0.0:5432: bind: address already in use
+ERROR: Encountered errors while bringing up the project.
+
+1. Identificar o Processo que Está Usando a Porta
+Execute o comando abaixo para verificar qual processo está usando a porta 5432:
+
+sudo lsof -i :5432
+
+O comando retornará algo como:
+COMMAND  PID     USER   FD   TYPE DEVICE SIZE/OFF NODE NAME
+postgres 418 postgres    6u  IPv4  23720      0t0  TCP localhost:postgresql (LISTEN)
+
+COMMAND: Nome do processo (ex.: postgres).
+PID: ID do processo.
+
+2. Parar o Processo que Está Usando a Porta
+Se o processo for o PostgreSQL ou outro serviço que você não precisa no momento, pare-o:
+
+Para o PostgreSQL:
+
+sudo systemctl stop postgresql
+
+
+ - Para outro processo, use o PID identificado no comando anterior:
+sudo kill -9 <PID>
+Ex. sudo kill -9 <PID>
+
+
+
+3. Subir os Contêineres Novamente
+Agora, tente subir os contêineres novamente:
+docker-compose up --build -d
+
+4. Alterar a Porta do Contêiner (Se Necessário)
+
+Se você não puder parar o processo que está usando a porta 5432, altere a porta mapeada no arquivo docker-compose.yml para outra porta, como 5433:
+version: "3"
+services:
+  db:
+    image: postgres:11-alpine
+    environment:
+      POSTGRES_PASSWORD: workout
+      POSTGRES_USER: workout
+      POSTGRES_DB: workout
+    ports:
+      - "5433:5432"  # Alterar a porta mapeada para 5433
+
+Após alterar, suba os contêineres novamente:
+= docker-compose up --build -d
+
+5. Testar a Conexão
+
+Se você alterou a porta, lembre-se de usá-la ao testar a conexão:
+
+psql -U workout -h localhost -p 5433 -d workout
+
+Se o problema persistir, compartilhe os logs do contêiner com:
+docker ps  -- para buscar noe do container
+docker logs <nome_do_container>
+
+
+apos isto, Reexecute as Migrações
+Agora, tente novamente executar as migrações:
+- make create-migrations d="init_db"
+- make run-migrations
+
+
+************* caso ocorra algum, segue verificacoes
+1. Verificar o Estado Atual do Banco de Dados
+Acesse o banco de dados para verificar a tabela de controle de migrações do Alembic:
+psql -U workout -h localhost -d workout
+
+2 Liste as tabelas para verificar se a tabela alembic_version existe:
+\dt
+Segue exemplos de amostragem
+
+workout=# \dt
+               List of relations
+ Schema |        Name        | Type  |  Owner  
+--------+--------------------+-------+---------
+ public | alembic_version    | table | workout
+ public | atleta             | table | workout
+ public | categoria          | table | workout
+ public | centro_treinamento | table | workout
+(4 rows)
+
+3. Se a tabela alembic_version existir, veja o conteúdo:
+SELECT * FROM alembic_version;
+
+workout=# SELECT * FROM alembic_version;
+ version_num  
+--------------
+ b0042a4d407d
+(1 row)
+
+2. Resolver o Problema (caso ainda existe)
+Dependendo do estado do banco de dados, você pode seguir uma das abordagens abaixo:
+
+Opção 1: Atualizar o Banco de Dados
+Se o banco de dados estiver desatualizado, aplique as migrações pendentes:
+
+ - make run-migrations
+
+Opção 2: Forçar a Sincronização
+Se você sabe que o banco de dados está em um estado correto, mas o Alembic não está sincronizado, você pode forçar a versão atual no banco de dados:
+
+Identifique a versão mais recente das migrações no diretório versions.
+
+Atualize manualmente a tabela alembic_version com a versão mais recente:
+ - UPDATE alembic_version SET version_num = '<nova_versao>';
+ Substitua <nova_versao> pelo identificador da migração mais recente.
+
+3. Recriar o Banco de Dados (Se Necessário)
+Se o banco de dados estiver em um estado inconsistente e você quiser começar do zero:
+
+Drope o banco de dados:
+- psql -U postgres
+- DROP DATABASE workout;
+- CREATE DATABASE workout;
+
+Reaplique as migrações:
+- make create-migrations d="init_db"
+- make run-migrations
+
+4. Verificar Logs
+Se o problema persistir, verifique os logs do Alembic para mais detalhes:
+- docker ps
+CONTAINER ID   IMAGE                COMMAND                  CREATED          STATUS          PORTS                                       NAMES
+d4ffa126559b   postgres:11-alpine   "docker-entrypoint.s…"   27 minutes ago   Up 16 minutes   0.0.0.0:5432->5432/tcp, :::5432->5432/tcp   workout_api_db_1
+- docker logs <nome_do_container>
+Exemplo: docker logs d4ffa126559b
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.utf8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/data ... ok
+creating subdirectories ... ok
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default timezone ... UTC
+selecting dynamic shared memory implementation ... posix
+creating configuration files ... ok
+running bootstrap script ... ok
+sh: locale: not found
+2025-03-20 13:48:09.272 UTC [29] WARNING:  no usable system locales were found
+performing post-bootstrap initialization ... ok
+
+WARNING: enabling "trust" authentication for local connections
+You can change this by editing pg_hba.conf or using the option -A, or
+--auth-local and --auth-host, the next time you run initdb.
+syncing data to disk ... ok
+
+Success. You can now start the database server using:
+
+    pg_ctl -D /var/lib/postgresql/data -l logfile start
+
+waiting for server to start....2025-03-20 13:48:10.359 UTC [35] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2025-03-20 13:48:10.381 UTC [36] LOG:  database system was shut down at 2025-03-20 13:48:09 UTC
+2025-03-20 13:48:10.391 UTC [35] LOG:  database system is ready to accept connections
+ done
+server started
+CREATE DATABASE
+
+
+/usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+
+waiting for server to shut down....2025-03-20 13:48:10.967 UTC [35] LOG:  received fast shutdown request
+2025-03-20 13:48:10.974 UTC [35] LOG:  aborting any active transactions
+2025-03-20 13:48:10.979 UTC [35] LOG:  background worker "logical replication launcher" (PID 42) exited with exit code 1
+2025-03-20 13:48:10.979 UTC [37] LOG:  shutting down
+2025-03-20 13:48:11.014 UTC [35] LOG:  database system is shut down
+ done
+server stopped
+
+PostgreSQL init process complete; ready for start up.
+
+2025-03-20 13:48:11.091 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2025-03-20 13:48:11.091 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+2025-03-20 13:48:11.103 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+2025-03-20 13:48:11.132 UTC [50] LOG:  database system was shut down at 2025-03-20 13:48:11 UTC
+2025-03-20 13:48:11.146 UTC [1] LOG:  database system is ready to accept connections
+
+
+***************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
