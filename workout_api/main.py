@@ -2,6 +2,7 @@ import os
 import sys
 
 from fastapi import FastAPI
+from fastapi_pagination import add_pagination
 
 # Adicione o diretório do projeto ao sys.path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -17,7 +18,8 @@ def create_app():
 
     # Registrar as rotas
     app.include_router(api_router)
-
+    # Adicionar Paginação Global
+    add_pagination(app)
     return app
 
 

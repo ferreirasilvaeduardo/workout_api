@@ -1,14 +1,20 @@
 from datetime import datetime
 from uuid import uuid4
+from typing import Optional  # Import necessário para parâmetros opcionais
 
 from fastapi import APIRouter, Body, HTTPException, status
 from pydantic import UUID4
+
 from sqlalchemy.future import select
+from sqlalchemy.exc import IntegrityError  # Import necessário para capturar a exceção
+
+from fastapi_pagination import Page
+from fastapi_pagination.ext.sqlalchemy_future import paginate as sqlalchemy_paginate
 
 from workout_api.dependencies import DataBaseDependency
 from workout_api.models.atleta import Atleta as AtletaModel
 from workout_api.schemas.atleta import Atleta as AtletaIn
-from workout_api.schemas.atleta import AtletaOut
+from workout_api.schemas.atleta import AtletaOut, AtletaOutBasic
 from workout_api.schemas.atleta import AtletaUpdate
 from workout_api.models.categoria import Categoria as CategoriaModel
 from workout_api.models.centro_treinamento import CentroTreinamento as CentroTreinamentoModel
@@ -16,17 +22,18 @@ from workout_api.models.centro_treinamento import CentroTreinamento as CentroTre
 router = APIRouter(prefix="/atletas", tags=["Atletas"])
 
 
-## @router.get(
-##     "/",
-##     summary="Consultar todas as Categorias",
-##     status_code=status.HTTP_200_OK,
-##     response_model=list[AtletaOut],
-## )
-## async def list_atletas(db_session: DataBaseDependency) -> list[AtletaOut]:
-##     atletas: list[AtletaOut] = (
-##         (await db_session.execute(select(AtletaModel))).scalars().all()
-##     )
-##     return atletas
+# @router.get(
+# "/",
+# summary="Consultar todas as Categorias",
+# status_code=status.HTTP_200_OK,
+# response_model=list[AtletaOut],
+# )
+# async def list_atletas(db_session: DataBaseDependency) -> list[AtletaOut]:
+# atletas: list[AtletaOut] = (
+# (await db_session.execute(select(AtletaModel))).scalars().all()
+# )
+# return atletas
+######### ********************************
 
 
 @router.post(
@@ -93,22 +100,82 @@ async def create_atleta(
         await db_session.commit()
 
         return atleta_out
+    except IntegrityError as exc:
+        # Captura a exceção de integridade e verifica se é relacionada ao CPF
+        await db_session.rollback()  # Reverte a transação em caso de erro
+        if "cpf".strip().upper() in str(exc.orig).strip().upper():  # Verifica se o erro está relacionado ao CPF
+            raise HTTPException(
+                status_code=status.HTTP_303_SEE_OTHER,
+                detail=f"Já existe um atleta cadastrado com o CPF: {atleta_in.cpf}",
+            ) from exc
+        # Relevanta a exceção se não for relacionada ao CPF
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ocorreu um erro ao inserir os dados no banco referente a integridade",
+        ) from exc
     except Exception as exc:
+        await db_session.rollback()  # Reverte a transação em caso de erro
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Ocorreu um erro ao inserir os dados no banco",
         ) from exc
 
 
+# @router.get(
+#     "/",
+#     summary="Consultar todas as Atletas",
+#     status_code=status.HTTP_200_OK,
+#     response_model=list[AtletaOut],
+# )
+# async def list_atletas(db_session: DataBaseDependency) -> list[AtletaOut]:
+#     atletas = (await db_session.execute(select(AtletaModel))).scalars().all()
+#     return [AtletaOut.model_validate(atleta, from_attributes=True) for atleta in atletas]
+######### ********************************
+## @router.get(
+##     "/",
+##     summary="Consultar todas as Atletas com filtros opcionais",
+##     status_code=status.HTTP_200_OK,
+##     response_model=list[AtletaOutBasic],
+## )
+## async def list_atletas(
+##     db_session: DataBaseDependency,
+##     nome: Optional[str] = None,
+##     cpf: Optional[str] = None,
+## ) -> list[AtletaOutBasic]:
+##     query = select(AtletaModel)
+##     # Adiciona filtros à query se os parâmetros forem fornecidos
+##     if nome:
+##         query = query.filter(AtletaModel.nome.ilike(f"%{nome}%"))
+##     if cpf:
+##         query = query.filter(AtletaModel.cpf == cpf)
+##     atletas = (await db_session.execute(query)).scalars().all()
+##     # return [AtletaOut.model_validate(atleta, from_attributes=True) for atleta in atletas]
+##     # Customiza a resposta para incluir apenas os campos desejados
+##     return [AtletaOutBasic.model_validate(atleta, from_attributes=True) for atleta in atletas]
+## ######### ********************************
+
+
 @router.get(
     "/",
-    summary="Consultar todas as Atletas",
+    summary="Consultar todas as Atletas com filtros opcionais",
     status_code=status.HTTP_200_OK,
-    response_model=list[AtletaOut],
+    response_model=Page[AtletaOutBasic],
 )
-async def list_atletas(db_session: DataBaseDependency) -> list[AtletaOut]:
-    atletas = (await db_session.execute(select(AtletaModel))).scalars().all()
-    return [AtletaOut.model_validate(atleta, from_attributes=True) for atleta in atletas]
+async def list_atletas(
+    db_session: DataBaseDependency,
+    nome: Optional[str] = None,
+    cpf: Optional[str] = None,
+) -> list[AtletaOutBasic]:
+    query = select(AtletaModel)
+    # Adiciona filtros à query se os parâmetros forem fornecidos
+    if nome:
+        query = query.filter(AtletaModel.nome.ilike(f"%{nome}%"))
+    if cpf:
+        query = query.filter(AtletaModel.cpf == cpf)
+    # atletas = (await db_session.execute(query)).scalars().all()
+    # return [AtletaOutBasic.model_validate(atleta, from_attributes=True) for atleta in atletas]
+    # Usa a função de paginação da biblioteca
+    return await sqlalchemy_paginate(db_session, query)
 
 
 @router.get(

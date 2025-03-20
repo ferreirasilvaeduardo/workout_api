@@ -46,7 +46,13 @@ class AtletaUpdate(Base):
     nome: Annotated[Optional[str], Field(None, description='Nome do atleta', example='Joao', max_length=50)]
     idade: Annotated[Optional[int], Field(None, description='Idade do atleta', example=25)]
 
+class AtletaOutBasic(Base):
+    nome: Annotated[str, Field(description='Nome do atleta', example='Joao', max_length=50)]
+    cpf: Annotated[str, Field(description='CPF do atleta', example='12345678900', max_length=11)]
+    categoria: Annotated["Categoria", Field(description='Categoria do atleta')] # noqa
+    centro_treinamento: Annotated["CentroTreinamento", Field(description='Centro de treinamento do atleta')] # noqa
+        
 # Reconstruir o modelo para garantir que está completamente definido
 AtletaOut.model_rebuild()
-# Reconstruir o modelo para garantir que está completamente definido
+AtletaOutBasic.model_rebuild()
 AtletaUpdate.model_rebuild()
